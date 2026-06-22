@@ -73,8 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             {/* Nav links */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', flex: 1, justifyContent: 'center' }}>
-              <a href="/" className="nav-link">Feed</a>
-              <a href="/" className="nav-link">Following</a>
+              <a href="/" className="nav-link">News Feed</a>
             </div>
 
             {/* Right side */}
