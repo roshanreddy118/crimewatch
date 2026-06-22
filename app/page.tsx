@@ -89,8 +89,8 @@ export default function Home() {
           <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--fg)', letterSpacing: '-0.03em', margin: 0 }}>
             News Feed
           </h1>
-          {counts.developing > 0 && (
-            <span className="badge-new">{counts.developing} live</span>
+          {counts.breaking > 0 && (
+            <span className="badge-new">{counts.breaking} live</span>
           )}
         </div>
         <p style={{ color: 'var(--fg-muted)', fontSize: '0.875rem', margin: 0 }}>
