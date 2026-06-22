@@ -8,6 +8,11 @@ const inter = Inter({ variable: '--font-geist-sans', subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'CrimeWatch — Legal News Tracker',
   description: 'Follow breaking legal news and track each story from first report to resolution',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
