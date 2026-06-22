@@ -10,7 +10,7 @@ export interface EnrichedStory {
   title: string;
   summary: string;
   category: string;
-  status: 'breaking' | 'ongoing' | 'resolved' | 'unknown';
+  status: 'breaking' | 'ongoing' | 'resolved';
   keyPeople: {
     defendant?: string;
     plaintiff?: string;
@@ -27,7 +27,7 @@ Respond ONLY with valid JSON — no markdown fences, no extra keys:
   "title": string,
   "summary": string,
   "category": string,
-  "status": "breaking" | "ongoing" | "resolved" | "unknown",
+  "status": "breaking" | "ongoing" | "resolved",
   "keyPeople": { "defendant": string | null, "plaintiff": string | null, "prosecutor": string | null },
   "allegations": string[]
 }
@@ -97,9 +97,10 @@ export async function enrichArticle(
     const jsonStr = raw.replace(/^```json?\s*/i, '').replace(/```\s*$/i, '').trim();
     const parsed: EnrichedStory = JSON.parse(jsonStr);
 
-    // Treat 'unknown' status as 'ongoing' — if it's a legal story worth tracking,
-    // it's at minimum an active situation
-    if (!parsed.status || parsed.status === 'unknown') parsed.status = 'ongoing';
+    // Treat missing/unknown status as 'ongoing'
+    if (!parsed.status || !['breaking','ongoing','resolved'].includes(parsed.status)) {
+      parsed.status = 'ongoing';
+    }
 
     // Sanitise every text field coming back from the model
     parsed.title      = stripHtml(parsed.title  || '').slice(0, 120);
