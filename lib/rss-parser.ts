@@ -15,7 +15,7 @@ export async function parseFeed(feedUrl: string): Promise<FeedItem[]> {
   try {
     const feed = await parser.parseURL(feedUrl);
     return (feed.items ?? []).map(item => {
-      const i = item as Record<string, unknown>;
+      const i = item as unknown as Record<string, unknown>;
       return {
         title:       item.title,
         description: item.contentSnippet || (i.description as string) || '',
