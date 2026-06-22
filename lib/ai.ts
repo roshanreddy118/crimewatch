@@ -184,7 +184,8 @@ export function heuristicExtract(title: string, content: string): EnrichedStory 
     'crime','criminal','defendant','prosecutor','judge','jury',
   ].some(k => text.includes(k));
 
-  let status: EnrichedStory['status'] = 'ongoing'; // default — if we can't tell, assume active
+  let status: EnrichedStory['status'] = 'ongoing'; // default
+  if (['verdict','sentenced','acquitted','dismissed','settled','closed'].some(k => text.includes(k)))
     status = 'resolved';
   else if (['pending','filed','scheduled','awaiting','investigation','probe'].some(k => text.includes(k)))
     status = 'ongoing';
