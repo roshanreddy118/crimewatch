@@ -33,6 +33,12 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# local SQLite database
+local.db
+local.db-shm
+local.db-wal
+scripts/test-*.mjs
+
 # vercel
 .vercel
 

@@ -1,26 +1,384 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* ─── Theme tokens ─────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --bg:          #f0f2f5;
+  --bg-alt:      #e4e7eb;
+  --surface:     #ffffff;
+  --surface-2:   #f1f3f5;
+  --border:      rgba(0,0,0,0.1);
+  --border-strong: rgba(0,0,0,0.18);
+  --fg:          #0f172a;
+  --fg-muted:    #475569;
+  --fg-subtle:   #94a3b8;
+  --accent:      #2563eb;
+  --accent-hover:#1d4ed8;
+  --accent-soft: rgba(37,99,235,0.1);
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.1),  0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.1),  0 2px 6px rgba(0,0,0,0.06);
+  --shadow-lg:   0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.07);
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --nav-h:       64px;
+  --gloss: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.0) 60%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Explicit light class — beats media query specificity */
+html.light {
+  color-scheme: light !important;
+  --bg:          #f0f2f5 !important;
+  --bg-alt:      #e4e7eb !important;
+  --surface:     #ffffff !important;
+  --surface-2:   #f1f3f5 !important;
+  --border:      rgba(0,0,0,0.1) !important;
+  --border-strong: rgba(0,0,0,0.18) !important;
+  --fg:          #0f172a !important;
+  --fg-muted:    #475569 !important;
+  --fg-subtle:   #94a3b8 !important;
+  --accent:      #2563eb !important;
+  --accent-hover:#1d4ed8 !important;
+  --accent-soft: rgba(37,99,235,0.1) !important;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.1),  0 1px 2px rgba(0,0,0,0.06) !important;
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.1),  0 2px 6px rgba(0,0,0,0.06) !important;
+  --shadow-lg:   0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.07) !important;
+  --gloss: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.0) 60%) !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html.dark {
+  color-scheme: dark;
+  --bg:          #0d1117;
+  --bg-alt:      #161b22;
+  --surface:     #1c2128;
+  --surface-2:   #21262d;
+  --border:      rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --fg:          #e6edf3;
+  --fg-muted:    #8b949e;
+  --fg-subtle:   #6e7681;
+  --accent:      #3b82f6;
+  --accent-hover:#2563eb;
+  --accent-soft: rgba(59,130,246,0.12);
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.3),  0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.2);
+  --shadow-lg:   0 12px 40px rgba(0,0,0,0.5),  0 4px 12px rgba(0,0,0,0.3);
+  --gloss: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.0) 60%);
 }
+
+/* No system mode — theme is always explicitly light or dark */
+
+/* ─── Base ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Force all text to use theme token so nothing bleeds through */
+html.light body,
+html.light body * {
+  color: inherit;
+}
+html.light input,
+html.light select,
+html.light textarea {
+  color: var(--fg);
+  background-color: var(--surface-2);
+}
+
+/* ─── Card / Surface ───────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+
+/* glossy sheen */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gloss);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.card > * { position: relative; z-index: 1; }
+
+.card-hover:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+}
+
+/* ─── Navbar ───────────────────────────────────────────────── */
+.navbar {
+  height: var(--nav-h);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  /* subtle top-edge gloss */
+  background-image: var(--gloss);
+}
+
+/* ─── Inputs ───────────────────────────────────────────────── */
+.input {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.9rem;
+  color: var(--fg);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
+}
+
+.input::placeholder { color: var(--fg-subtle); }
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* custom select arrow that works in both modes */
+.input-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  padding-right: 2.2rem;
+  cursor: pointer;
+}
+
+/* Ensure option text is readable in light mode */
+.input-select option {
+  background: var(--surface);
+  color: var(--fg);
+}
+
+/* ─── Buttons ──────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s, opacity 0.2s;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.12), transparent);
+  pointer-events: none;
+}
+
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 16px rgba(37,99,235,0.45);
+}
+
+.btn-ghost {
+  background: var(--surface-2);
+  color: var(--fg-muted);
+  border: 1px solid var(--border-strong);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--bg-alt);
+  color: var(--fg);
+  border-color: var(--border-strong);
+}
+
+/* ─── Status badges ────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.badge-breaking { background: rgba(239,68,68,0.12);  color: #ef4444; }
+.badge-ongoing  { background: rgba(245,158,11,0.12); color: #f59e0b; }
+.badge-resolved { background: rgba(34,197,94,0.12);  color: #22c55e; }
+
+/* Pulse animation for breaking stories */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+.badge-breaking::before { animation: pulse-dot 1.5s ease-in-out infinite; }
+
+/* ─── Stat card ────────────────────────────────────────────── */
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gloss);
+  pointer-events: none;
+}
+.stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+/* ─── Timeline ─────────────────────────────────────────────── */
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  margin-top: 4px;
+}
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  min-height: 24px;
+  background: var(--border-strong);
+  margin: 4px auto 0;
+}
+
+/* ─── Chip / Tag ───────────────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.chip-blue   { background: rgba(59,130,246,0.1);  color: #3b82f6;  border-color: rgba(59,130,246,0.2); }
+.chip-purple { background: rgba(147,51,234,0.1);  color: #9333ea;  border-color: rgba(147,51,234,0.2); }
+
+/* ─── Skeleton loader ──────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--bg-alt) 50%, var(--surface-2) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── News-specific extras ─────────────────────────────────── */
+/* Update count pill on cards */
+.update-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid rgba(59,130,246,0.2);
+}
+
+/* "NEW" flash badge */
+.badge-new {
+  background: rgba(239,68,68,0.15);
+  color: #ef4444;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ─── Nav links ───────────────────────────────────────────── */
+.nav-link {
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-link:hover {
+  color: var(--fg);
+  background: var(--surface-2);
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--fg-subtle); }
+
+/* ─── Focus visible ────────────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ─── Transitions ──────────────────────────────────────────── */
+body, .card, .navbar, .stat-card, .input, .btn, .badge, .chip {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
