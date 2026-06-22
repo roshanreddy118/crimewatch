@@ -20,9 +20,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             try{
               var t=localStorage.getItem('theme');
               var d=document.documentElement;
-              if(t==='dark'){d.classList.add('dark');d.style.colorScheme='dark';}
-              else{d.classList.add('light');d.style.colorScheme='light';}
-            }catch(e){}
+              if(t==='light'){d.classList.add('light');d.style.colorScheme='light';}
+              else{d.classList.add('dark');d.style.colorScheme='dark';}
+            }catch(e){
+              document.documentElement.classList.add('dark');
+            }
           })();
         `}} />
       </head>
