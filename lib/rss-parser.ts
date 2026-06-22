@@ -14,14 +14,17 @@ const parser = new Parser({
 export async function parseFeed(feedUrl: string): Promise<FeedItem[]> {
   try {
     const feed = await parser.parseURL(feedUrl);
-    return (feed.items ?? []).map(item => ({
-      title:       item.title,
-      description: item.contentSnippet || item.description,
-      link:        item.link,
-      pubDate:     item.pubDate,
-      content:     item.content || item['content:encoded'] || item.description,
-      creator:     item.creator,
-    }));
+    return (feed.items ?? []).map(item => {
+      const i = item as Record<string, unknown>;
+      return {
+        title:       item.title,
+        description: item.contentSnippet || (i.description as string) || '',
+        link:        item.link,
+        pubDate:     item.pubDate,
+        content:     item.content || (i['content:encoded'] as string) || (i.description as string) || '',
+        creator:     item.creator,
+      };
+    });
   } catch (error) {
     console.error(`Failed to parse feed ${feedUrl}:`, error);
     return [];
